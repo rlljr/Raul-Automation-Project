@@ -1,0 +1,293 @@
+
+01_Paramiko
+
+01_paramiko_ssh_basics.py
+#exec_command vs invoke shell
+
+exec_command -- best used in linux because it handles intelligencce input out or error based on response type.
+
+invoke shell -- for interacting network device because it starts an interactive shell session on the SSH server.
+             -- data will be in bytes format and we would need to decode it.
+
+
+
+
+from paramiko import client
+from getpass import getpass #function to hide the password when password is being typed
+
+hostname = '172.16.20.251'
+username = input("Enter Username:")
+
+if not username:
+    username = 'admin'
+    print(f"No username provided, considering default username {username}")
+
+password = getpass(f"Enter Password of the user {username}: ") or "admin" # the or "admin" is the default password
+
+ssh_client = client.SSHClient()
+ssh_client.set_missing_host_key_policy(client.AutoAddPolicy()) #AutoAddPolicy would automatically say "yes" to the ssh key prompt for known hosts
+
+ssh_client.connect(hostname=hostname,
+                   port=22,
+                   username=username,
+                   password=password,
+                   look_for_keys=False, allow_agent=False) #look_for_keys=false because were only using username and password, not ssh key
+
+print("Connected successfully")
+device_access = ssh_client.invoke_shell() #initiate invoke_shell to execute commands
+device_access.send("terminal len 0\n")# if you don't put terminal len 0, the output will be incompete out as indicated by --More--. Normally you'd have to press enter here to continue printing the output
+#   --More-- 
+#
+#    Process finished with exit code 0
+#
+
+device_access.send("show run\n") #\n is escape character
+time.sleep(2)
+
+output = device_access.recv(65535) #maximum bytes of data that can be received
+print(output.decode())
+ssh_client.close()
+
+
+################
+02_bytes_unicode.py
+
+
+code:
+b1 = b"\n\n Hey\tthere"
+print(b1)
+print(type(b1))
+print(b1.decode())
+
+output:
+# b'\n\n Hey\tthere'
+# <class 'bytes'>
+
+
+#  Hey	there
+
+# Process finished with exit code 0
+
+
+s1 = '''
+
+Hey there
+'''
+print(s1.encode())
+
+output:
+#it will print the bytes format of the output
+# /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/venv/bin/python /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko/02_bytes_unicode.py
+# b'\n\nHey there\n'
+
+
+
+################
+03_for_loop_multiple_commands.py
+
+
+import time
+
+from paramiko import client
+from getpass import getpass
+
+hostname = '172.16.20.154'
+username = input("Enter Username:")
+
+if not username:
+    username = 'admin'
+    print(f"No username provided, considering default username {username}")
+
+password = getpass(f"Enter Password of the user {username}: ") or "admin"
+
+commands = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end'] #each command is a string
+
+ssh_client = client.SSHClient()
+ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+
+ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
+                   allow_agent=False)
+
+print("Connected successfully")
+device_access = ssh_client.invoke_shell()
+device_access.send("terminal len 0\n")
+
+for cmd in commands: #iterate through the list commands in line 103
+    device_access.send(f"{cmd}\n")
+    time.sleep(1)
+    output = device_access.recv(65535)
+    print(output.decode(), end='') #without the end='', output will not comeout properly. It would come in a new line
+#see the sample output without end =''. end will print it in the same line
+# raul-2960x1(config)#
+# int lo1001
+# raul-2960x1(config-if)#
+# ip address 1.1.1.1 255.255.255.0
+
+device_access.send("show run int lo1001\n")
+time.sleep(2)#if you don't put delay here, some output might be omitted. in paramiko we need to handle it manually
+output = device_access.recv(65535)
+print(output.decode())
+
+ssh_client.close()
+
+
+
+##########################
+04_ssh_function.py
+
+import time
+
+from paramiko import client
+from getpass import getpass
+
+# hostname = 'nxos1.test.lab' --we commented this because it conflicts with the arguments in cisco_cmd_executor function (line 155)
+username = input("Enter Username:")
+
+if not username:
+    username = 'admin'
+    print(f"No username provided, considering default username {username}")
+
+password = getpass(f"Enter Password of the user {username}: ") or "admin"
+
+csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
+nxos_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.2 255.255.255.0', 'end']
+
+def cisco_cmd_executor(hostname, commands): 
+    print(f"Connecting to the device {hostname}..")
+    ssh_client = client.SSHClient()
+    ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+    ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
+                       allow_agent=False)
+
+    print(f"Connected to the device {hostname}")
+    device_access = ssh_client.invoke_shell()
+    device_access.send("terminal len 0\n")
+
+    for cmd in commands:
+        device_access.send(f"{cmd}\n")
+        time.sleep(1)
+        output = device_access.recv(65535)
+        print(output.decode(), end='')
+
+    device_access.send("show run int lo1001\n")
+    time.sleep(2)
+    output = device_access.recv(65535)
+    print(output.decode())
+
+    ssh_client.close()
+
+
+cisco_cmd_executor('172.16.20.210', csr_cmd)
+cisco_cmd_executor('172.16.20.154', nxos_cmd)
+
+
+
+###############
+07_SSH_key_based_auth_linux.py
+
+###generate ssh key on the ubuntu machine
+ubuntu@ubuntu-virtual-machine:~$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ubuntu/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/ubuntu/.ssh/id_rsa
+Your public key has been saved in /home/ubuntu/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:7YsUiSVMbR5cEQucVC2sbOPubVpNi3Qed8hpno4NhRM ubuntu@ubuntu-virtual-machine
+The key's randomart image is:
++---[RSA 3072]----+
+|      .=o==+     |
+|     o  B.o..    |
+|      o+.o..E    |
+|       +*o   + o |
+|      .oS.o * B .|
+|        .+ * O o |
+|       .. + = o  |
+|       ..+.. =   |
+|       .+oo . o  |
++----[SHA256]-----+
+ubuntu@ubuntu-virtual-machine:~$ ls ~/.ssh
+id_rsa  id_rsa.pub
+ubuntu@ubuntu-virtual-machine:~$ cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCi9S35quIfFRluo+Ays8szMWLqZOMPBD17rVIysCiDDl33iEcg0myTVLMIvbI0GTUAdgaz9aqVsEKe2g+6UZiBxOdinSZIj09iy6I2Z+NNShhCqEjKr+SFFGAcw5iM8qK89JYsZxsyd/nsn8ztjcsiY8qEZmxwvKSG8K4Hvz2I1Hh77H4u3HVzFVu7oW7hf96b0CeJNKqyaFnmRU9xIc/A7D9tUZ/J78yAzDdSJnAaEcoxL+o3z5McygKDb/AVLo1oKiJTOqN3ncE20bRrr8H2aG7qfRENpi+bKl7nntZNMx3GNEPfif6jOBFMBAGo/Dj5oR7qqrVUrLJEJnUISBJ9On3DoYkTOlDZspivxTHNfxug9yDhaKbRPkPqtc+BOONwwVnG9HSikpboBMQo2HsU8QmjoIeCZfb/wKgYzVVmHg6885Zp4BwDJ7BN6GfEtGdlc9d6Yk3ioK8lfIXB/2y8Zsnz2x2boggy/k82vpFbzhJ765hZpwRcs7+cXc2Mn48= ubuntu@ubuntu-virtual-machine
+
+
+###from mac, do this command to copy the public key of this mac to authorized_keys of the ubuntu
+rlimlatjr@Rauls-MacBook-Pro ~ % ssh-copy-id ubuntu@172.16.20.124
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/Users/rlimlatjr/.ssh/id_rsa.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+ubuntu@172.16.20.124's password:
+
+Number of key(s) added:        1
+
+Now try logging into the machine, with:   "ssh 'ubuntu@172.16.20.124'"
+and check to make sure that only the key(s) you wanted were added.
+
+
+#### once the public key of mac is added to the authorized keys of ubuntu, when you ssh from mac to ubuntu you no longer need to enter password
+ubuntu@ubuntu-virtual-machine:~/.ssh$ ls
+authorized_keys  id_rsa  id_rsa.pub
+ubuntu@ubuntu-virtual-machine:~/.ssh$ cat authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDCHNs39CxuLKvlWwCRNRtrJV0YqYRkzSJS0KVgK1kGpK73KWFnsrpUm7Z461wOOhJZcaIIOomiPZ99MhNVR2WWnsiJSrBHSSkYGzoh4zWZy85IEY4+1t9hzWOfyNIGRDmUfPwFsYKtHowU3c8mHE57Il3JrELe9FLoPGapjBz3VWeGzB28+ADuf2gOR2192rxw78IkFfUie/MSd2PqYlzynyLFF0yMQFlq4r8peT00X84XNHm1N0u8v6gNRKibIzYaMpWSmiKpJmvIT9juNuop8AwgStgYH1a6TdWZDB6dYDgqYxKGEqpEK0fFOjfHiUo6nCuS70APZ3uEmL6bjysY9MeJrJvlZFVJcrN3XpoaQme+505RtKQHZ6+nv5ffdMLiCVDTSFgbgyxjiJ+45qQiaBqkT6oilU9Ebmgdu3G2curfDFtUk1sM5/DkKv4oK+Ehro9gS8NvSO3d1/LnEkdq3UTIFqS3drQWP0zUzGx6LzqKWF7m1canaitqDZyhmvk= rlimlatjr@mp-mac-limlat.local
+ubuntu@ubuntu-virtual-ma
+
+
+###from mac, ssh to ubuntu no longer asks for password
+rlimlatjr@Rauls-MacBook-Pro ~ % ssh ubuntu@172.16.20.124
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-71-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+New release '22.04.3 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Your Hardware Enablement Stack (HWE) is supported until April 2025.
+*** System restart required ***
+Last login: Fri Feb  9 01:04:52 2024 from 172.16.20.252
+ubuntu@ubuntu-virtual-machine:~$
+
+#for the script:
+
+import time
+from paramiko import client, RSAKey
+from getpass import getpass
+
+linux_cmd = ['ls -larth', 'echo $USER', 'hostname', 'sdfgh']
+pkey_pwd = getpass("Enter Pkey Password:")
+key_file = RSAKey.from_private_key_file(filename='/Users/rlimlatjr/.ssh/id_rsa', password=pkey_pwd)#we modified the location of the private key to the file located in the mac
+#key_file = RSAKey.from_private_key_file(filename='/home/evolve/.ssh/id_rsa', password=pkey_pwd)
+
+def exec_cmd_executor(hostname, commands, username):
+    print(f"Connecting to the device {hostname}..")
+    ssh_client = client.SSHClient()
+    ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+    ssh_client.connect(hostname=hostname, port=22, username=username,#notice that we removed the password here
+                       look_for_keys=True,#need to specify this to look for the public key
+                       allow_agent=True,
+                       pkey=key_file)#this is used for the private key file
+
+    print(f"Connected to the device {hostname}")
+
+    for cmd in commands:
+        print(f"\n{'#'*10} Executing {cmd}{'#'*10}")
+        stdin, stdout, stderr = ssh_client.exec_command(cmd)
+        print(stdout.read().decode())
+        err = stderr.read().decode()
+        if err:
+            print(f"Error Occurred: {err}")
+
+
+exec_cmd_executor('172.16.20.124', linux_cmd, 'ubuntu')#we modified the username from evolve to ubuntu
+#exec_cmd_executor('192.168.0.19', linux_cmd, 'evolve')#also here we removed the password
+
