@@ -7,7 +7,7 @@ from getpass import getpass
 import socket
 
 username = 'admin'
-password = 'admin'
+password = 'cisco!123'
 csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
 
 def cisco_cmd_executor(hostname, commands):
@@ -33,17 +33,17 @@ def cisco_cmd_executor(hostname, commands):
         output = device_access.recv(65535)
         print(output.decode())
         ssh_client.close()
-    except ssh_exception.NoValidConnectionsError:
-        print("SSH Port not reachable")
-    except socket.gaierror:
-        print("Check the hostname")
-    except ssh_exception.AuthenticationException:
-        print("Authentication failed, check credentials")
+    # except ssh_exception.NoValidConnectionsError:
+    #     print("SSH Port not reachable")
+    # except socket.gaierror:
+    #     print("Check the hostname")
+    # except ssh_exception.AuthenticationException:
+    #     print("Authentication failed, check credentials")
 
     except:
         print("Exception Occurred")
         print(sys.exc_info())
-        # traceback.print_exception(*sys.exc_info())
+        #traceback.print_exception(*sys.exc_info())#this will print the complete exceptions
 
-cisco_cmd_executor('csr1.test.lab', csr_cmd)
-cisco_cmd_executor('192.168.0.20', csr_cmd)
+cisco_cmd_executor('172.16.20.210', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
