@@ -291,3 +291,188 @@ def exec_cmd_executor(hostname, commands, username):
 exec_cmd_executor('172.16.20.124', linux_cmd, 'ubuntu')#we modified the username from evolve to ubuntu
 #exec_cmd_executor('192.168.0.19', linux_cmd, 'evolve')#also here we removed the password
 
+###############
+08_paramiko_exceptions.py
+import sys
+import time
+import traceback
+
+from paramiko import client, ssh_exception
+from getpass import getpass
+import socket
+
+username = 'admin'
+password = 'cisco!123'
+csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
+
+def cisco_cmd_executor(hostname, commands):
+    try:
+        print(f"Connecting to the device {hostname}..")
+        ssh_client = client.SSHClient()
+        ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+        ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
+                           allow_agent=False)
+
+        print(f"Connected to the device {hostname}")
+        device_access = ssh_client.invoke_shell()
+        device_access.send("terminal len 0\n")
+
+        for cmd in commands:
+            device_access.send(f"{cmd}\n")
+            time.sleep(1)
+            output = device_access.recv(65535)
+            print(output.decode(), end='')
+
+        device_access.send("show run int lo1001\n")
+        time.sleep(2)
+        output = device_access.recv(65535)
+        print(output.decode())
+        ssh_client.close()
+    except ssh_exception.NoValidConnectionsError:
+        print("SSH Port not reachable")
+    except socket.gaierror:
+        print("Check the hostname")
+    except ssh_exception.AuthenticationException:
+        print("Authentication failed, check credentials")
+
+    except:
+        print("Exception Occurred")
+        print(sys.exc_info())
+        # traceback.print_exception(*sys.exc_info())#this will print the complete exceptions
+
+cisco_cmd_executor('172.16.20.210', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
+
+
+#########
+09_SSH_key_auth_Cisco.py
+
+#enable ssh key based authentication with cisco device
+
+#1. Copy the public key of mac .
+rlimlatjr@Rauls-MacBook-Pro ~ % cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDCHNs39CxuLKvlWwCRNRtrJV0YqYRkzSJS0KVgK1kGpK73KWFnsrpUm7Z461wOOhJZcaIIOomiPZ99MhNVR2WWnsiJSrBHSSkYGzoh4zWZy85IEY4+1t9hzWOfyNIGRDmUfPwFsYKtHowU3c8mHE57Il3JrELe9FLoPGapjBz3VWeGzB28+ADuf2gOR2192rxw78IkFfUie/MSd2PqYlzynyLFF0yMQFlq4r8peT00X84XNHm1N0u8v6gNRKibIzYaMpWSmiKpJmvIT9juNuop8AwgStgYH1a6TdWZDB6dYDgqYxKGEqpEK0fFOjfHiUo6nCuS70APZ3uEmL6bjysY9MeJrJvlZFVJcrN3XpoaQme+505RtKQHZ6+nv5ffdMLiCVDTSFgbgyxjiJ+45qQiaBqkT6oilU9Ebmgdu3G2curfDFtUk1sM5/DkKv4oK+Ehro9gS8NvSO3d1/LnEkdq3UTIFqS3drQWP0zUzGx6LzqKWF7m1canaitqDZyhmvk= rlimlatjr@mp-mac-limlat.local
+
+#2. Because in cisco terminal, it only accepts 256 characters. So we need to use fold. 64 Characters per line
+
+rlimlatjr@Rauls-MacBook-Pro ~ % fold -b -w 64 ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDCHNs39CxuLKvlWwCRNRtrJV0Y
+qYRkzSJS0KVgK1kGpK73KWFnsrpUm7Z461wOOhJZcaIIOomiPZ99MhNVR2WWnsiJ
+SrBHSSkYGzoh4zWZy85IEY4+1t9hzWOfyNIGRDmUfPwFsYKtHowU3c8mHE57Il3J
+rELe9FLoPGapjBz3VWeGzB28+ADuf2gOR2192rxw78IkFfUie/MSd2PqYlzynyLF
+F0yMQFlq4r8peT00X84XNHm1N0u8v6gNRKibIzYaMpWSmiKpJmvIT9juNuop8Awg
+StgYH1a6TdWZDB6dYDgqYxKGEqpEK0fFOjfHiUo6nCuS70APZ3uEmL6bjysY9MeJ
+rJvlZFVJcrN3XpoaQme+505RtKQHZ6+nv5ffdMLiCVDTSFgbgyxjiJ+45qQiaBqk
+T6oilU9Ebmgdu3G2curfDFtUk1sM5/DkKv4oK+Ehro9gS8NvSO3d1/LnEkdq3UTI
+FqS3drQWP0zUzGx6LzqKWF7m1canaitqDZyhmvk= rlimlatjr@mp-mac-limlat
+.local
+rlimlatjr@Rauls-MacBook-Pro ~ %
+
+#3. Next access the cisco device
+
+rlimlatjr@Rauls-MacBook-Pro ~ % ssh admin@172.16.20.154
+(admin@172.16.20.154) Password:
+
+raul-2960x1#
+raul-2960x1#CONF T
+Enter configuration commands, one per line.  End with CNTL/Z.
+raul-2960x1(config)#user
+raul-2960x1(config)#username
+raul-2960x1(config)#ip ssh pubkey-chain
+raul-2960x1(conf-ssh-pubkey)#username admin2 privilege 15
+raul-2960x1(conf-ssh-pubkey-user)#key-string
+raul-2960x1(conf-ssh-pubkey-data)#ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDCHNs39CxuLKvlWwCRNRtrJV0Y  ##here is where you paste the key from step 2
+raul-2960x1(conf-ssh-pubkey-data)#qYRkzSJS0KVgK1kGpK73KWFnsrpUm7Z461wOOhJZcaIIOomiPZ99MhNVR2WWnsiJ
+raul-2960x1(conf-ssh-pubkey-data)#SrBHSSkYGzoh4zWZy85IEY4+1t9hzWOfyNIGRDmUfPwFsYKtHowU3c8mHE57Il3J
+raul-2960x1(conf-ssh-pubkey-data)#rELe9FLoPGapjBz3VWeGzB28+ADuf2gOR2192rxw78IkFfUie/MSd2PqYlzynyLF
+raul-2960x1(conf-ssh-pubkey-data)#F0yMQFlq4r8peT00X84XNHm1N0u8v6gNRKibIzYaMpWSmiKpJmvIT9juNuop8Awg
+raul-2960x1(conf-ssh-pubkey-data)#StgYH1a6TdWZDB6dYDgqYxKGEqpEK0fFOjfHiUo6nCuS70APZ3uEmL6bjysY9MeJ
+raul-2960x1(conf-ssh-pubkey-data)#rJvlZFVJcrN3XpoaQme+505RtKQHZ6+nv5ffdMLiCVDTSFgbgyxjiJ+45qQiaBqk
+raul-2960x1(conf-ssh-pubkey-data)#T6oilU9Ebmgdu3G2curfDFtUk1sM5/DkKv4oK+Ehro9gS8NvSO3d1/LnEkdq3UTI
+raul-2960x1(conf-ssh-pubkey-data)#FqS3drQWP0zUzGx6LzqKWF7m1canaitqDZyhmvk= rlimlatjr@mp-mac-limlat
+raul-2960x1(conf-ssh-pubkey-data)#.local
+
+
+#from show run, you will see this. Hash is md5
+ip ssh pubkey-chain
+  username admin2
+   key-hash ssh-rsa 03247FB8F159FEB5B4550F47E9330E1B rlimlatjr@mp-mac-limlat.local
+
+#from the mac, to see if the public key has the same hash, do this
+rlimlatjr@Rauls-MacBook-Pro .ssh % ssh-keygen -E md5 -lf ~/.ssh/id_rsa.pub
+3072 MD5:03:24:7f:b8:f1:59:fe:b5:b4:55:0f:47:e9:33:0e:1b rlimlatjr@mp-mac-limlat.local (RSA)
+rlimlatjr@Rauls-MacBook-Pro .ssh %
+
+#if you try ssh to the device from mac, it will still going to prompt you for password because by default cisco is still giving the default algorithm, rsa-ssh
+rlimlatjr@Rauls-MacBook-Pro ~ % ssh admin2@172.16.20.154
+(admin2@172.16.20.154) Password:
+
+#we need to modify this file
+rlimlatjr@Rauls-MacBook-Pro .ssh % sudo nano /etc/ssh/ssh_config
+Password:
+###output omitted. Add only line 416 and 417
+Host *
+    SendEnv LANG LC_*
+    HostKeyAlgorithms +ssh-rsa
+    PubKeyAcceptedKeyTypes +ssh-rsa
+
+#09 is modified from 08
+
+The code changes are below
+import sys
+import time
+import traceback
+
+import paramiko.util
+from paramiko import client, ssh_exception, RSAKey
+from getpass import getpass
+import socket
+paramiko.util.log_to_file("paramiko.log", level="DEBUG")
+from getpass import getpass
+import socket
+paramiko.util.log_to_file("paramiko.log", level="DEBUG")# to enable logging
+
+
+username = 'admin'#change username to admin2
+password = 'cisco!123'#remove the password
+csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
+key_file = RSAKey.from_private_key_file(filename='/Users/rlimlatjr/.ssh/id_rsa') #add this for the private key file
+
+def cisco_cmd_executor(hostname, commands):
+    try:
+        print(f"Connecting to the device {hostname}..")
+        ssh_client = client.SSHClient()
+        ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+        ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=True,#Change look for keys from False to True
+                           allow_agent=True)#Allow agent change to True
+
+        print(f"Connected to the device {hostname}")
+        device_access = ssh_client.invoke_shell()
+        device_access.send("terminal len 0\n")
+
+        for cmd in commands:
+            device_access.send(f"{cmd}\n")
+            time.sleep(1)
+            output = device_access.recv(65535)
+            print(output.decode(), end='')
+
+        device_access.send("show run int lo1001\n")
+        time.sleep(2)
+        output = device_access.recv(65535)
+        print(output.decode())
+        ssh_client.close()
+    except ssh_exception.NoValidConnectionsError:
+        print("SSH Port not reachable")
+    except socket.gaierror:
+        print("Check the hostname")
+    except ssh_exception.AuthenticationException:
+        print("Authentication failed, check credentials")
+
+    except:
+        print("Exception Occurred")
+        print(sys.exc_info())
+        #traceback.print_exception(*sys.exc_info())#this will print the complete exceptions
+
+#cisco_cmd_executor('172.16.20.210', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
+
