@@ -10,7 +10,7 @@ paramiko.util.log_to_file("paramiko.log", level="DEBUG")
 
 username = 'admin2'
 csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
-key_file = RSAKey.from_private_key_file(filename='/home/evolve/.ssh/id_rsa')
+key_file = RSAKey.from_private_key_file(filename='/Users/rlimlatjr/.ssh/id_rsa')
 def cisco_cmd_executor(hostname, commands):
     try:
         print(f"Connecting to the device {hostname}..")
@@ -48,4 +48,6 @@ def cisco_cmd_executor(hostname, commands):
         print(sys.exc_info())
         # traceback.print_exception(*sys.exc_info())
 
-cisco_cmd_executor('csr1.test.lab', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
+
+
