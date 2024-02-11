@@ -1,0 +1,353 @@
+import os #get the file list or file directory details. Helps you interact with operating system
+
+print(os.getcwd())
+
+Terminal Output:
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/venv/bin/python /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations/01_file_operations_demo.py
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations
+
+
+--------------------------------------------------------------------------------------------------
+
+
+import os #get the file list or file directory details. Helps you interact with operating system
+print(os.getcwd())
+os.chdir('../01_Paramiko') # the .. changes the current directory 1 level down
+print(os.getcwd())
+
+Terminal Output:
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/venv/bin/python /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations/01_file_operations_demo.py
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+
+--------------------------------------------------------------------------------------------------
+#if you want to get the list of files from the current directory, you can use listdir
+
+import os #get the file list or file directory details. Helps you interact with operating system
+
+print(os.getcwd())
+os.chdir('../01_Paramiko')
+print(os.getcwd())
+print(len(os.listdir()))#in this case output will be 10 because its len. but without the len, it will list all files
+
+Terminal Output:
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/venv/bin/python /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations/01_file_operations_demo.py
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+['09_SSH_key_auth_Cisco.py', 'paramiko.log', '08_Paramiko_exceptions.py', '07_SSH_key_based_auth_linux.py', '01_Paramiko.txt', '03_for_loop_multiple_commands.py', '04_ssh_function.py', '05_SSH_host_key_Policy.py', '02_bytes_unicode.py', '01_paramiko_ssh_basics.py']
+
+--------------------------------------------------------------------------------------------------
+
+We can also use formatted string
+
+import os #get the file list or file directory details. Helps you interact with operating system
+
+print(os.getcwd())
+os.chdir('../01_Paramiko')
+print(os.getcwd())
+print(len(os.listdir()))
+print(f"Current working directory is {os.getcwd()}")
+
+Terminal Output:
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+10
+Current working directory is /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+
+--------------------------------------------------------------------------------------------------
+#You can also show file details using os.system('ls -larth')
+import os #get the file list or file directory details. Helps you interact with operating system
+
+print(os.getcwd())
+os.chdir('../01_Paramiko')
+print(os.getcwd())
+print(len(os.listdir()))
+print(f"Current working directory is {os.getcwd()}")
+print(os.system('ls -larth'))
+
+Terminal output:
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations
+/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+10
+Current working directory is /Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/01_Paramiko
+total 136
+-rw-r--r--   1 rlimlatjr  staff   863B Feb  8 14:47 01_paramiko_ssh_basics.py
+-rw-r--r--   1 rlimlatjr  staff   1.1K Feb  8 16:16 02_bytes_unicode.py
+-rw-r--r--   1 rlimlatjr  staff   1.0K Feb  8 21:01 03_for_loop_multiple_commands.py
+-rw-r--r--   1 rlimlatjr  staff   1.4K Feb  8 22:47 04_ssh_function.py
+-rw-r--r--   1 rlimlatjr  staff   1.4K Feb  8 23:17 05_SSH_host_key_Policy.py
+-rw-r--r--@  1 rlimlatjr  staff   1.0K Feb  9 01:34 07_SSH_key_based_auth_linux.py
+-rw-r--r--@  1 rlimlatjr  staff   1.6K Feb  9 10:57 08_Paramiko_exceptions.py
+-rw-r--r--@  1 rlimlatjr  staff   1.8K Feb  9 22:17 09_SSH_key_auth_Cisco.py
+drwxr-xr-x  12 rlimlatjr  staff   384B Feb  9 22:17 .
+-rw-r--r--   1 rlimlatjr  staff    13K Feb  9 22:17 paramiko.log
+-rw-r--r--   1 rlimlatjr  staff    18K Feb  9 22:21 01_Paramiko.txt
+drwxr-xr-x   8 rlimlatjr  staff   256B Feb  9 22:37 ..
+
+--------------------------------------------------------------------------------------------------
+
+
+
+import os #get the file list or file directory details. Helps you interact with operating system
+
+print(os.getcwd())
+os.chdir('../01_Paramiko')
+print(os.getcwd())
+print(len(os.listdir()))
+print(f"Current working directory is {os.getcwd()}")
+print(os.system('ls -larth'))
+
+files = (os.listdir()) # list all files in ../01_Paramiko Directory
+files.sort()
+for file in files: #For each file
+    # print(file)
+    with open(file) as file_data: #open file and put it to a variable file_data
+        if "paramiko" in file.casefold(): # casefold ignores lower/uppercase
+            print(print(f"\n\n{'#'*10} {file} {'#'*10}"))
+            # print(type(file_data))
+            # print(dir(file_data))
+            print(file_data.read())
+
+----------------------
+
+file1 = open('config1.txt', 'r')
+print(dir(file1)) #shows all methods for the function
+print(file1.read())#this will read entire content of the file
+
+Terminal Output:
+['_CHUNK_SIZE', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__enter__', '__eq__', '__exit__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__iter__', '__le__', '__lt__', '__ne__', '__new__', '__next__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '_checkClosed', '_checkReadable', '_checkSeekable', '_checkWritable', '_finalizing', 'buffer', 'close', 'closed', 'detach', 'encoding', 'errors', 'fileno', 'flush', 'isatty', 'line_buffering', 'mode', 'name', 'newlines', 'read', 'readable', 'readline', 'readlines', 'reconfigure', 'seek', 'seekable', 'tell', 'truncate', 'writable', 'write', 'write_through', 'writelines']
+config t
+interface loopback1001
+ip address 10.1.1.100 255.255.255.0
+no shutdown
+end
+config t
+interface loopback1002
+ip address 20.1.1.100 255.255.255.0
+no shutdown
+end
+
+--------------------------------------------------------------------------------------------------
+commands = file1.readlines()#readline will print only the first line
+print (commands) # this will print the line as a list
+for command in commands: #iterate through list
+    print(command.rstrip('\n'))#rstrip means strip from right
+file1.close()
+
+Terminal output:
+['config t\n', 'interface loopback1001\n', 'ip address 10.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', 'config t\n', 'interface loopback1002\n', 'ip address 20.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', '\n']
+config t
+interface loopback1001
+ip address 10.1.1.100 255.255.255.0
+no shutdown
+end
+config t
+interface loopback1002
+ip address 20.1.1.100 255.255.255.0
+no shutdown
+end
+
+--------------------------------------------------------------------------------------------------
+
+
+'''with open''' # file with get closed automatically
+with open('config1.txt') as file1:
+    commands = file1.readlines()
+    print(commands)#print the list of commands
+for command in commands:
+    print(command.rstrip('\n'))#print each item from the list and strip right \n
+
+Terminal Output:
+
+['config t\n', 'interface loopback1001\n', 'ip address 10.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', 'config t\n', 'interface loopback1002\n', 'ip address 20.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', '\n']
+config t
+interface loopback1001
+ip address 10.1.1.100 255.255.255.0
+no shutdown
+end
+config t
+interface loopback1002
+ip address 20.1.1.100 255.255.255.0
+no shutdown
+
+--------------------------------------------------------------------------------------------------
+
+
+with open('config4.txt', 'a') as file2:
+    file2.write("testdata3\ntestdata5\n")
+
+Terminal Output:
+#if you put 'w', this will overwrite the contents of the file
+#if you put 'a', this will append to the contents of the file
+#if file doesn't exist, regardless if you put 'w' or 'a', the file will get created
+
+
+
+--------------------------------------------------------------------------------------------------
+
+#the file is of binary type, this will not work.
+with open('test_file.pdf', 'r') as source_file:
+    s = source_file.read()
+
+Terminal Output:
+Traceback (most recent call last):
+  File "/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/02_file_operations/01_file_operations_demo.py", line 48, in <module>
+    s = source_file.read()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/codecs.py", line 322, in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd3 in position 10: invalid continuation byte 
+# here there's a UnicodeDecodeError  'utf-8'
+
+
+#in order to read this file, you need to put 'rb'
+with open('test_file.pdf', 'rb') as source_file:
+    s = source_file.read()
+print(s)
+
+
+#to copy binary file to another file
+
+with open('test_file.pdf', 'rb') as source_file:
+    s = source_file.read()
+print(s)
+
+with open('new_file.pdf', 'wb') as dest_file:
+    dest_file.write(s)
+
+
+
+#To delete the file,
+os.remove('new_file.pdf')
+
+
+
+########################################################################################
+02_command_output_to_file.py
+
+#this program will create unique configuration files with time stamps and hostname based on the number host
+
+import sys
+import time
+import traceback
+
+from paramiko import client, ssh_exception
+from getpass import getpass
+import socket
+import datetime #if you want to import the datetime, we can import this library
+
+username = 'admin'
+password = 'cisco!123'
+csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
+
+def cisco_cmd_executor(hostname, commands):
+    try:
+        print(f"Connecting to the device {hostname}..")
+        now = datetime.datetime.now().replace(microsecond=0)#before connecting to the device we're going to import the time
+        current_conf_file = (f"{now}_{hostname}..") #variable that will be used to name the output file in date and hostname format
+        ssh_client = client.SSHClient()
+        ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+        ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
+                           allow_agent=False)
+
+        print(f"Connected to the device {hostname}")
+        device_access = ssh_client.invoke_shell()
+        device_access.send("terminal len 0\n")
+
+        with open(current_conf_file, 'w') as cmd_data: #create a new file with updated datetime and hostname
+            for cmd in commands:
+                device_access.send(f"{cmd}\n")
+                time.sleep(1)
+                output = device_access.recv(65535)
+                cmd_data.write(output.decode())#write decoded output to cmd_data
+                print(output.decode(), end='')
+
+            device_access.send("show run int lo1001\n")
+            cmd_data.write(output.decode()) #add this line to also write the running config of int lo1001
+            time.sleep(2)
+            output = device_access.recv(65535)
+            print(output.decode())
+            ssh_client.close()
+    except ssh_exception.NoValidConnectionsError:
+        print("SSH Port not reachable")
+    except socket.gaierror:
+        print("Check the hostname")
+    except ssh_exception.AuthenticationException:
+        print("Authentication failed, check credentials")
+
+    except:
+        print("Exception Occurred")
+        print(sys.exc_info())
+        #traceback.print_exception(*sys.exc_info())#this will print the complete exceptions
+
+cisco_cmd_executor('172.16.20.210', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
+
+
+################################################################################################
+02_command_output_to_file.py
+
+#this code will get commands from text file
+
+username = 'admin'
+password = 'cisco!123'
+csr_cmd = ['show run']
+with open('config1.txt', 'r') as conf_file:
+    new_cmd = conf_file.readlines()
+print(new_cmd)
+
+Terminal Output:#it will print the the content of config1.txt in a list format
+['config t\n', 'interface loopback1001\n', 'ip address 10.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', 'config t\n', 'interface loopback1002\n', 'ip address 20.1.1.100 255.255.255.0\n', 'no shutdown\n', 'end\n', '\n']
+
+
+
+
+import sys
+import time
+import traceback
+from paramiko import client, ssh_exception
+from getpass import getpass
+import socket
+import datetime
+
+username = 'admin'
+password = 'cisco!123'
+csr_cmd = ['show run']
+with open('config1.txt', 'r') as conf_file:
+    new_cmd = conf_file.readlines() #store the variable in new_cmd
+print(new_cmd)
+
+def cisco_cmd_executor(hostname, commands):
+    try:
+        print(f"Connecting to the device {hostname}..")
+        now = datetime.datetime.now().replace(microsecond=0)
+        current_conf_file = f"{now}_{hostname}.txt"
+        ssh_client = client.SSHClient()
+        ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
+        ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
+                           allow_agent=False)
+
+        print(f"Connected to the device {hostname}")
+        device_access = ssh_client.invoke_shell()
+        device_access.send("terminal len 0\n")
+        with open(current_conf_file, 'w') as cmd_data:
+            for cmd in commands:
+                device_access.send(f"{cmd}\n")#we removed the \n here. If we don't it press enter
+                time.sleep(1)
+                output = device_access.recv(65535)
+                cmd_data.write(output.decode())
+                print(output.decode(), end='')
+
+    except ssh_exception.NoValidConnectionsError:
+        print("SSH Port not reachable")
+    except socket.gaierror:
+        print("Check the hostname")
+    except ssh_exception.AuthenticationException:
+        print("Authentication failed, check credentials")
+
+    except:
+        print("Exception Occurred")
+        print(sys.exc_info())
+        # traceback.print_exception(*sys.exc_info())
+
+cisco_cmd_executor('172.16.20.154', new_cmd) #we need to pass the list to the csr_cmd function
+

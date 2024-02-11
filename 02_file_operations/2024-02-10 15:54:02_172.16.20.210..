@@ -1,0 +1,9 @@
+
+raul-access-switch#terminal len 0
+raul-access-switch#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+raul-access-switch(config)#int lo1001
+raul-access-switch(config-if)#ip address 1.1.1.1 255.255.255.0
+raul-access-switch(config-if)#end
+raul-access-switch#end
+raul-access-switch#

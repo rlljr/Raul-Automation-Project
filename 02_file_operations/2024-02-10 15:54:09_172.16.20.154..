@@ -1,0 +1,9 @@
+
+raul-2960x1#terminal len 0
+raul-2960x1#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+raul-2960x1(config)#int lo1001
+raul-2960x1(config-if)#ip address 1.1.1.1 255.255.255.0
+raul-2960x1(config-if)#end
+raul-2960x1#end
+raul-2960x1#

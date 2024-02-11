@@ -1,0 +1,27 @@
+
+raul-2960x1#terminal len 0
+raul-2960x1#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+raul-2960x1(config)#
+raul-2960x1(config)#interface loopback1001
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#ip address 10.1.1.100 255.255.255.0
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#no shutdown
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#end
+raul-2960x1#
+raul-2960x1#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+raul-2960x1(config)#
+raul-2960x1(config)#interface loopback1002
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#ip address 20.1.1.100 255.255.255.0
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#no shutdown
+raul-2960x1(config-if)#
+raul-2960x1(config-if)#end
+raul-2960x1#
+raul-2960x1#
+raul-2960x1#
+raul-2960x1#
