@@ -7,7 +7,7 @@ import socket
 import datetime
 
 username = 'admin'
-password = 'admin'
+password = 'cisco!123'
 csr_cmd = ['show run']
 
 def cisco_cmd_executor(hostname, commands):
@@ -43,5 +43,8 @@ def cisco_cmd_executor(hostname, commands):
         print(sys.exc_info())
         # traceback.print_exception(*sys.exc_info())
 
-cisco_cmd_executor('csr1.test.lab', csr_cmd)
+cisco_cmd_executor('172.16.20.154', csr_cmd)
+
+
+
 

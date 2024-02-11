@@ -1,4 +1,10 @@
-testdata
-testdata2
-testdata3
-testdata4
+config t
+interface loopback1001
+ip address 10.1.1.100 255.255.255.0
+no shutdown
+end
+config t
+interface loopback1002
+ip address 20.1.1.100 255.255.255.0
+no shutdown
+end
