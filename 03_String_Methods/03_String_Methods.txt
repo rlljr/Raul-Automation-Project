@@ -1,0 +1,248 @@
+03_String_Methods
+
+username = 'admin1'
+# print(dir(username))
+# print(username.capitalize()) #Output Admin1
+# print(username.casefold())#Output admin1
+# print(username.center(20), "Hi") # will return centered string with length we defined #Output:      admin1        Hi
+user_input = input("Enter Username:").casefold().strip() #casefold will ignore case, strip will remove leading and trailing whitespaces from the output
+if user_input == username:
+    print(f"Input {user_input} matched")
+else:
+    print("Not matched")
+
+Terminal Output:
+Enter Username:Admin1   
+Input admin1 matched
+
+Process finished with exit code 0
+
+#If we want to ignore spaces in between characters, use the code below
+
+
+
+user_input = input("Enter Username:").casefold().strip().replace(" ","") #casefold will ignore case, strip will remove leading and trailing whitespaces from the output
+if user_input == username:
+    print(f"Input {user_input} matched")
+else:
+    print("Not matched")
+
+Terminal input/output:
+Enter Username:A d M i n 1 # notice there's spaces here
+Input admin1 matched
+
+
+------------------------------------------------------------------------------------------
+
+
+ip = '192.168.0.1'
+device = 'router'
+print(f"IP Address is: {0}\nDevice type is: {1}")
+
+Terminal Output:
+IP Address is: 192.168.0.1
+Device type is: router
+
+
+#another way to do this is by. Terminal Output would be the same
+ip = '192.168.0.1'
+device = 'router'
+print(f"IP Address is: {ip}\nDevice type is: {device}".format(ip,device))
+
+
+------------------------------------------------------------------------------------------
+username = 'admin1'
+'''find'''
+print(username.find('2')) # this will try to find index 2 in the string.
+
+Terminal Output:
+-1#indicates its not there
+
+#you can't use index on string. it will give an exception
+print(username.index('2'))
+
+Terminal Output:
+Traceback (most recent call last):
+  File "/Users/rlimlatjr/PycharmProjects/Raul-Automation-Project/03_String_Methods/01_string_methods.py", line 24, in <module>
+    print(username.index('2'))
+ValueError: substring not found
+
+------------------------------------------------------------------------------------------
+
+'''is decimal'''
+a_number = '\u0035'
+print(a_number)
+
+Terminal output:
+5 #unicode of u0035 is 35. if you put small u instead of capital u, you only need to have 4 characters so add "00"
+
+
+'''is decimal'''
+a_number = '\u0035'
+print(a_number)
+print(a_number.isdigit())#to verify if \u0035 is a digit
+print(a_number.isdecimal())
+b_letter = 'A'
+print(b_letter.isascii())
+
+
+Terminal Output:
+5
+True # this verifies that \u0035 is a digit
+True # this verifies that \u0035 is a digit
+True # this verifies that b_letter is ascii
+
+------------------------------------------------------------------------------------------
+
+'''is identifier  a-z, A-Z, 0-9, _ : should not start with number'''
+an_identifier = 'A123a_'
+print(an_identifier.isidentifier())
+
+Terminal Output:
+True
+
+------------------------------------------------------------------------------------------
+'''printable'''
+printable = 'Hey there'
+print(printable.isprintable())
+
+Terminal Output:
+True
+
+------------------------------------------------------------------------------------------
+'''join'''
+list1 = ['Cisco', "IOS", "17.3"]
+print('-'.join(list1))
+print('.'.join(list1))
+
+Terminal output:
+
+Cisco-IOS-17.3
+Cisco.IOS.17.3
+
+------------------------------------------------------------------------------------------
+'''ljust''' # left justified 
+print("abc".ljust(18), '12345')
+print("abcabcabc".ljust(18), '12345')
+print("abcabc".ljust(18), '12345')
+print("abcrtui".ljust(18), '12345')
+
+Terminal Output:
+abc                12345
+abcabcabc          12345
+abcabc             12345
+abcrtui            12345
+
+------------------------------------------------------------------------------------------
+
+'''maketrans'''
+message = "Hey there.."
+trans = message.maketrans('e.', 'E!')# replace e with E and replace . with !
+print(message.translate(trans))
+
+Terminal Output:
+HEy thErE!!
+
+------------------------------------------------------------------------------------------
+
+# '''partition'''
+message = "ip route 192.168.0.0"
+print(message.partition(" route "))
+#
+
+Terminal Output:
+('ip', ' route ', '192.168.0.0')
+
+------------------------------------------------------------------------------------------
+'''replace'''
+message = "Hello there"
+print(message.replace("there", "world"))
+
+Terminal OUtput:
+Hello world
+
+------------------------------------------------------------------------------------------
+# '''split'''
+users = 'user1, user2, user3'
+user_list = users.split(', ')
+print(user_list)
+for user in user_list:
+    print(f"Username is: {user}")
+
+'''splitlines'''
+print("user1\nuser2\nuser3".splitlines())#this return the users in a list format
+
+
+Terminal Output:
+['user1', 'user2', 'user3']
+Username is: user1
+Username is: user2
+Username is: user3
+['user1', 'user2', 'user3']
+------------------------------------------------------------------------------------------
+
+'''translate'''
+trans = {46: 33} #translation table #46 is decimal value for glyph value "." and 33 is decimal value for glyph value "!"
+print("Hey there..".translate(trans))
+
+Terminal Output:
+Hey there!!
+
+------------------------------------------------------------------------------------------
+
+'''zfill''' #adds additional zero to complete the number of characters
+print('abc'.zfill(5))
+
+Terminal Output:
+00abc
+
+
+##########################################################################################
+02_splitlines_methods.py
+
+
+show_output = '''GigabitEthernet1       192.168.0.63    YES NVRAM  up                    up
+GigabitEthernet2       unassigned      YES NVRAM  up                    up
+GigabitEthernet3       unassigned      YES NVRAM  up                    up
+GigabitEthernet4       unassigned      YES NVRAM  up                    up
+Loopback1001           10.1.1.100      YES manual up                    up
+Loopback1002           20.1.1.100      YES manual up                    up
+'''
+#
+intf_lines = show_output.splitlines()
+print(intf_lines)
+
+Terminal output:
+['GigabitEthernet1       192.168.0.63    YES NVRAM  up                    up', 'GigabitEthernet2       unassigned      YES NVRAM  up                    up', 'GigabitEthernet3       unassigned      YES NVRAM  up                    up', 'GigabitEthernet4       unassigned      YES NVRAM  up                    up', 'Loopback1001           10.1.1.100      YES manual up                    up', 'Loopback1002           20.1.1.100      YES manual up                    up']
+
+
+------------------------------------------------------------------------------------------
+
+intf_lines = show_output.splitlines()#create list. Each item in the list is from a line
+print(intf_lines)
+for intf in intf_lines:
+    intf_details = intf.split()#create a new list for each item from the line ex. ['GigabitEthernet1', '192.168.0.63', 'YES', 'NVRAM', 'up', 'up']
+
+    if intf_details[1] == 'unassigned':#if the the first element on the list has value of "unassigned, continue on the loop"
+        continue
+    print(f"Interface Name: {intf_details[0]} Interface IP {intf_details[1]}")
+
+Terminal Output:
+['GigabitEthernet1       192.168.0.63    YES NVRAM  up                    up', 'GigabitEthernet2       unassigned      YES NVRAM  up                    up', 'GigabitEthernet3       unassigned      YES NVRAM  up                    up', 'GigabitEthernet4       unassigned      YES NVRAM  up                    up', 'Loopback1001           10.1.1.100      YES manual up                    up', 'Loopback1002           20.1.1.100      YES manual up                    up']
+Interface Name: GigabitEthernet1 Interface IP 192.168.0.63
+Interface Name: Loopback1001 Interface IP 10.1.1.100
+Interface Name: Loopback1002 Interface IP 20.1.1.100
+
+------------------------------------------------------------------------------------------
+
+
+
+with open('output.txt') as text:
+    lines = text.readlines()#convert the lines from the file as a string
+# print(lines)
+    print("Press Enter..", end='')
+    for line in lines:
+        if input() == '':
+            line = line.strip('\n') #remove the enter
+            print(line, end='') #if dont set end='', there would still be newline on the output
+    print("Completed")
