@@ -1,0 +1,281 @@
+
+Regex:
+
+
+# square brackets means or and . means any character
+ [Cc].isco
+ Will match Cisco, cisco, or cdsco
+ 
+# * means 0 or more repetition of the leading character
+[Cc]i*sco
+Will match:
+
+Cisco, ciiiiisco, or csco
+
+# + means 1 or more repetition
+[Cc]i+sco
+Cisco, ciiiiisco
+
+# ? means 0 or 1  repetition
+
+[Cc]i?sco
+
+Will match csco
+
+# ^ caret means starting of the string
+
+# $ means ending of the string
+
+
+
+# greedy/non greedy
+
+
+show version
+Csco IOS XE Software, Version 17.03.03
+Cisco IOS Software [Amsterdam], Virtual XE Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 17.3.3, RELEASE SOFTWARE (fc7)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2021 by Cisco Systems, Inc.
+Compiled Thu 04-Mar-21 12:49 by mcpre
+
+
+greedy behavior:
+regex: Ci.+o
+
+Cisco IOS Software [Amsterdam], Virtual XE Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Versio
+
+non greedy:
+regex: Ci.+?o
+#This will only Match Cisco
+
+# \s space character
+Regex Pattern: Ci\s.+?o
+
+Will match
+Ci sco
+
+
+###############################################################################################
+01_RegEx_Fundamentals.py
+with open('show_version.txt') as ver_data: #open the show version file
+    ver_output = ver_data.read()
+
+my_pattern = r"Cisco" # Regex Pattern
+re_output = re.search(pattern=my_pattern, string=ver_output)#search means just the first occurence
+print(re_output.group(0))
+
+terminal Output:
+Cisco
+
+---------------------------------------------------------------------------------------------------------
+with open('show_version.txt') as ver_data: #open the show version file
+    ver_output = ver_data.read()
+
+my_pattern = r"Cisco.+, Version (\d\S+)"
+re_output = re.search(pattern=my_pattern, string=ver_output)
+version_output = re_output
+
+print(f"{'IOS Version:'.ljust(18)}: {version_output}")
+
+
+Terminal Output:
+IOS Version:      : <re.Match object; span=(13, 52), match='Cisco IOS XE Software, Version 17.03.03'>
+
+# if you want a much cleaner output,You can use groups
+
+with open('show_version.txt') as ver_data: #open the show version file
+    ver_output = ver_data.read()
+
+my_pattern = r"Cisco.+, Version (\d\S+)" #(\d\S+) is essentially group1
+re_output = re.search(pattern=my_pattern, string=ver_output)
+version_output = re_output
+
+print(f"{'IOS Version:'.ljust(18)}: {version_output}")
+
+Terminal Output:
+IOS Version:      : Cisco IOS XE Software, Version 17.03.03
+
+
+# To get group 1, just use
+with open('show_version.txt') as ver_data: #open the show version file
+    ver_output = ver_data.read()
+
+my_pattern = r"Cisco.+, Version (\d\S+)"
+re_output = re.search(pattern=my_pattern, string=ver_output)
+version_output = re_output.group(1) #Right here
+
+print(f"{'IOS Version:'.ljust(18)}: {version_output}")
+
+Terminal Output:
+IOS Version:      : 17.03.03
+
+
+-----
+Regex groups:
+
+with open('show_version.txt') as ver_data: #open the show version file
+    ver_output = ver_data.read()
+
+
+my_pattern = r"(cisco)\.(com)"#\\. escape charter for . group1 is cisco and com is group2
+re_output = re.search(pattern=my_pattern, string=ver_output)
+
+if re_output:
+    print("Match found")
+    print(re_output.group(0))
+    print(re_output.group(1))
+    print(re_output.group(2))
+else:
+    print("Match not found")
+
+
+Terminal Output:
+Match found
+cisco.com # group 0
+cisco # group 1
+com# group 2
+
+
+########################################
+re.compile
+
+'''compile'''
+my_pattern = re.compile(r"(cisco)\.(\w+)") #\w means any word character, + symbol match til the end
+result = my_pattern.search(string=ver_output)
+print(result)
+print(result.group(0))
+
+Terminal Output:
+<re.Match object; span=(209, 218), match='cisco.com'>
+cisco.com
+
+
+#####################################################
+'''compile Example'''
+my_pattern = re.compile(r"C....")
+print(my_pattern.search(string=ver_output))#only finds the first occurence
+print(my_pattern.findall(string=ver_output)) #gets all the matches
+
+Terminal Output:
+<re.Match object; span=(13, 18), match='Cisco'>
+['Cisco', 'Cisco', 'Copyr', 'Cisco', 'Compi', 'Cisco', 'Copyr', 'Certa', 'Cisco', 'CSR-1', 'Cisco', 'Cisco', 'CSR10', 'CH8IZ', 'Confi', 'CSR-1']
+
+
+------------------------------------------------------------------------------
+my_pattern = re.compile(r"C....")
+results = my_pattern.finditer(string=ver_output)
+for result in results:
+    print(result)
+
+Terminal output:
+<re.Match object; span=(13, 18), match='Cisco'>
+<re.Match object; span=(53, 58), match='Cisco'>
+<re.Match object; span=(231, 236), match='Copyr'>
+<re.Match object; span=(258, 263), match='Cisco'>
+<re.Match object; span=(278, 283), match='Compi'>
+<re.Match object; span=(318, 323), match='Cisco'>
+<re.Match object; span=(341, 346), match='Copyr'>
+<re.Match object; span=(410, 415), match='Certa'>
+<re.Match object; span=(432, 437), match='Cisco'>
+<re.Match object; span=(918, 923), match='CSR-1'>
+<re.Match object; span=(1267, 1272), match='Cisco'>
+<re.Match object; span=(1693, 1698), match='Cisco'>
+<re.Match object; span=(2084, 2089), match='CSR10'>
+<re.Match object; span=(2185, 2190), match='CH8IZ'>
+<re.Match object; span=(2394, 2399), match='Confi'>
+<re.Match object; span=(2428, 2433), match='CSR-1'>
+
+---------------------------------------------------------------------------
+'''compile Example'''
+my_pattern = re.compile(r"C....")
+#print(my_pattern.search(string=ver_output))#only finds the first occurence
+#print(my_pattern.findall(string=ver_output))
+results = my_pattern.finditer(string=ver_output)
+for result in results:
+    print(result)
+    print(result.group())
+    print(result.span())#span Method returns a tuple containing starting and ending index of the matched string.
+
+Terminal Output
+<re.Match object; span=(13, 18), match='Cisco'>
+Cisco
+(13, 18)
+<re.Match object; span=(53, 58), match='Cisco'>
+Cisco
+(53, 58)
+<re.Match object; span=(231, 236), match='Copyr'>
+Copyr
+(231, 236)
+<re.Match object; span=(258, 263), match='Cisco'>
+Cisco
+(258, 263)
+<re.Match object; span=(278, 283), match='Compi'>
+Compi
+(278, 283)
+<re.Match object; span=(318, 323), match='Cisco'>
+Cisco
+(318, 323)
+<re.Match object; span=(341, 346), match='Copyr'>
+Copyr
+(341, 346)
+<re.Match object; span=(410, 415), match='Certa'>
+Certa
+(410, 415)
+<re.Match object; span=(432, 437), match='Cisco'>
+Cisco
+(432, 437)
+<re.Match object; span=(918, 923), match='CSR-1'>
+CSR-1
+(918, 923)
+<re.Match object; span=(1267, 1272), match='Cisco'>
+Cisco
+(1267, 1272)
+<re.Match object; span=(1693, 1698), match='Cisco'>
+Cisco
+(1693, 1698)
+<re.Match object; span=(2084, 2089), match='CSR10'>
+CSR10
+(2084, 2089)
+<re.Match object; span=(2185, 2190), match='CH8IZ'>
+CH8IZ
+(2185, 2190)
+<re.Match object; span=(2394, 2399), match='Confi'>
+Confi
+(2394, 2399)
+<re.Match object; span=(2428, 2433), match='CSR-1'>
+CSR-1
+(2428, 2433)
+
+
+##############################################################################################################
+
+'''Validate User input '''
+# python3 or python3.10
+input1 = input("Enter Python Version:").casefold()
+my_pattern = re.compile(r"python3(\.10)?\Z")
+match = my_pattern.search(input1)
+if match:
+    print(f"Matched with {input1}")
+else:
+    print("Not matched")
+
+
+Terminal Output:
+Enter Python Version:python3.10
+Matched with python3.10
+
+----------------------------------------------------------------------------------------
+
+'''Email validation pattern'''
+# support_mail = 'please reach out to help@gmail.com, support@gmail.com, admin@gmail.co.in ab@abc.co.us, abc@aa.co.uk'
+# email_pattern = re.compile(r"[\w\.-]+@[\w\.-]+.co[m|\.](\w{2})?")#2 means two occurence
+# results = email_pattern.finditer(support_mail)
+# for result in results:
+#     print(result.group())
+
+Terminal Output:
+help@gmail.com
+support@gmail.com
+admin@gmail.co.in
+ab@abc.co.us
+abc@aa.co.uk

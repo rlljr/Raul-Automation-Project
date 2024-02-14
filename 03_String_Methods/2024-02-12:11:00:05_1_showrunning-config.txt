@@ -1,0 +1,227 @@
+
+raul-2960x1#terminal len 0
+raul-2960x1#show running-config
+Building configuration...
+
+Current configuration : 4614 bytes
+!
+! Last configuration change at 02:43:28 UTC Wed Jan 12 2000 by admin
+! NVRAM config last updated at 08:24:06 UTC Tue Jan 11 2000 by admin
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname raul-2960x1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+username admin privilege 15 secret 5 $1$dg07$jHHNVDf1wGgXwE6rRoe9V/
+username admin2 privilege 15
+no aaa new-model
+switch 1 provision ws-c2960xr-48fpd-i
+system mtu routing 1500
+!
+!
+ip domain-name raul
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3539316224
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3539316224
+ revocation-check none
+ rsakeypair TP-self-signed-3539316224
+!
+!
+crypto pki certificate chain TP-self-signed-3539316224
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 33353339 33313632 3234301E 170D3030 30313031 30303332 
+  34305A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D33 35333933 
+  31363232 3430819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281 
+  81009C01 EAC97986 4BA6A275 DAF9FFA0 54DBB954 FC32163C AD8C831D B8EE4036 
+  89C68C75 DAB37395 D6B4C9E5 491A43DC 67357603 913F7BAA 7D294E5C C646E68C 
+  AD87DF9D AB94B598 186E0433 5EF10F2A 3F62565C 6E89F57D 0765F108 72DC8915 
+  7F1B57F9 FB111353 CCCCED41 3F9BE594 C029772F 36F369F1 411F3958 F8AD2757 
+  7D0F0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 14451686 2E818DE4 6F84C6C5 183B4F97 D9DEDD14 25301D06 
+  03551D0E 04160414 4516862E 818DE46F 84C6C518 3B4F97D9 DEDD1425 300D0609 
+  2A864886 F70D0101 05050003 81810027 6EC2C7C8 B7E7C2FC 204E37D1 D697D16A 
+  20F68D70 D86B8D67 DA021078 4B2A172C B49296F5 DF6C0403 6399DE5A 3756FA92 
+  818B0A84 BADF7D45 261F7F4A 96070C8A 092BC404 38B58147 86069A1B D76CF42F 
+  B1361B95 ADE5836C 701D5B14 18AB2DE3 64038DD3 D347463A 5F1946C1 59C019A5 
+  630A0996 C6586D1D 59C08772 3584B4
+  	quit
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback1001
+ ip address 10.1.1.100 255.255.255.0
+!
+interface Loopback1002
+ ip address 20.1.1.100 255.255.255.0
+!
+interface FastEthernet0
+ ip address 172.16.20.154 255.255.255.0
+!
+interface GigabitEthernet1/0/1
+!
+interface GigabitEthernet1/0/2
+!
+interface GigabitEthernet1/0/3
+!
+interface GigabitEthernet1/0/4
+!
+interface GigabitEthernet1/0/5
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/0/25
+!
+interface GigabitEthernet1/0/26
+!
+interface GigabitEthernet1/0/27
+!
+interface GigabitEthernet1/0/28
+!
+interface GigabitEthernet1/0/29
+!
+interface GigabitEthernet1/0/30
+!
+interface GigabitEthernet1/0/31
+!
+interface GigabitEthernet1/0/32
+!
+interface GigabitEthernet1/0/33
+!
+interface GigabitEthernet1/0/34
+!
+interface GigabitEthernet1/0/35
+!
+interface GigabitEthernet1/0/36
+!
+interface GigabitEthernet1/0/37
+!
+interface GigabitEthernet1/0/38
+!
+interface GigabitEthernet1/0/39
+!
+interface GigabitEthernet1/0/40
+!
+interface GigabitEthernet1/0/41
+!
+interface GigabitEthernet1/0/42
+!
+interface GigabitEthernet1/0/43
+!
+interface GigabitEthernet1/0/44
+!
+interface GigabitEthernet1/0/45
+!
+interface GigabitEthernet1/0/46
+!
+interface GigabitEthernet1/0/47
+!
+interface GigabitEthernet1/0/48
+!
+interface GigabitEthernet1/0/49
+!
+interface GigabitEthernet1/0/50
+!
+interface TenGigabitEthernet1/0/1
+!
+interface TenGigabitEthernet1/0/2
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan99
+ ip address dhcp
+!
+ip forward-protocol nd
+ip http server
+ip http secure-server
+!
+ip ssh pubkey-chain
+  username admin2
+   key-hash ssh-rsa 03247FB8F159FEB5B4550F47E9330E1B rlimlatjr@mp-mac-limlat.local
+!
+!
+!
+!
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
+!
+end
+
+raul-2960x1#
+raul-2960x1#

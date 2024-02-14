@@ -1,0 +1,68 @@
+
+Regex:
+
+
+ #square brackets means or and . means any character
+ [Cc].isco
+ Will match Cisco, cisco, or cdsco
+ 
+# * means 0 or more repetition of the leading character
+[Cc]i*sco
+Will match:
+
+Cisco, ciiiiisco, or csco
+
+#+ means 1 or more repetition
+[Cc]i+sco
+Cisco, ciiiiisco
+
+#? means 0 or 1  repetition
+
+[Cc]i?sco
+
+Will match csco
+
+#^ caret means starting of the string
+
+#$ means ending of the string
+
+
+
+#greedy/non greedy
+
+
+show version
+Csco IOS XE Software, Version 17.03.03
+Cisco IOS Software [Amsterdam], Virtual XE Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 17.3.3, RELEASE SOFTWARE (fc7)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2021 by Cisco Systems, Inc.
+Compiled Thu 04-Mar-21 12:49 by mcpre
+
+
+greedy behavior:
+regex: Ci.+o
+
+Cisco IOS Software [Amsterdam], Virtual XE Software (X86_64_LINUX_IOSD-UNIVERSALK9-M), Versio
+
+non greedy:
+regex: Ci.+?o
+#This will only Match Cisco
+
+#\s space character
+Regex Pattern: Ci\s.+?o
+
+Will match
+Ci sco
+
+
+###############################################################################################
+01_RegEx_Fundamentals.py
+with open('show_version.txt') as ver_data:
+    ver_output = ver_data.read()
+
+my_pattern = r"Cisco"
+re_output = re.search(pattern=my_pattern, string=ver_output)
+print(re_output.group(0))
+
+
+
