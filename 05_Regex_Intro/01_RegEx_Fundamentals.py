@@ -119,8 +119,8 @@ Matches the empty string, word should be in the middle
 # ############################################
 ''' \''''
 #noinspection PyRedeclaration
-my_pattern = re.compile(r'\*\n')
-print(my_pattern.search(ver_output))
+# my_pattern = re.compile(r'\*\n')
+# print(my_pattern.search(ver_output))
 ############################################
 
 '''IGNORECASE'''
@@ -133,11 +133,11 @@ by default, dot matches any character except the newline'''
 # print(re.search('hello.hello', 'Hello\nHello'))
 
 # ############################################
-# '''match'''
+'''match'''
 # my_string = 'abcd1234abcd'
-# # print(re.match('abcd', my_string)) # None
-# # print(re.search('1234abcd', my_string)) # match:
-# print(re.fullmatch('abcd1234abcd', my_string)) # match
+# print(re.match('abcd', my_string)) # Matches only the beginning of the string
+# print(re.search('1234abcd', my_string)) # match anything on the string
+# print(re.fullmatch('abcd1234abcd', my_string)) # match entire string
 #
 # ############################################
 # '''sub'''

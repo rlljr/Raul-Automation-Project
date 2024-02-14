@@ -279,3 +279,164 @@ support@gmail.com
 admin@gmail.co.in
 ab@abc.co.us
 abc@aa.co.uk
+
+
+################
+
+''' 
+^ \Z matches only with single line
+
+^ : (Caret.) Matches the start of the string, 
+and in MULTILINE mode also matches immediately after each newline.
+
+\Z : Matches the end of the string or just before the newline at the end of the string,
+ and in MULTILINE mode also matches before a newline.
+
+\A : Matches only at the start of the string.
+
+\Z : Matches only at the end of the string.
+
+\A and \Z scans entire multiline and prints last result'''
+###############################################################
+str1 = """DC01 IND R1"""
+
+print(re.search(pattern=r"^D.+1", string=str1))
+print(re.findall(pattern=r"^D.+1", string=str1))
+r = re.finditer(pattern=r"^D.+1", string=str1)
+for data in r:
+    print(data.group())
+
+Terminal Output:
+<re.Match object; span=(0, 11), match='DC01 IND R1'>
+['DC01 IND R1']
+DC01 IND R1
+
+#Convert to multiline string
+#If you have multiline string you need to enable multiline, otherwise you'll not get anything
+
+str1 = """DC01 IND R1
+DC02 US R1
+DC03 UK R1"""
+
+print(re.search(pattern=r"^D.+1$", string=str1))
+print(re.findall(pattern=r"^D.+1$", string=str1))
+r = re.finditer(pattern=r"^D.+1$", string=str1)
+for data in r:
+    print(data.group())
+
+
+Terminal Output:
+
+
+
+------------------------------------------------------------------------------------
+# print(re.search(pattern=r"^D.+1\Z", string=str1, flags=re.MULTILINE))
+# print(re.findall(pattern=r"^D.+1\Z", string=str1, flags=re.MULTILINE))
+# r = re.finditer(pattern=r"^D.+1\Z", string=str1, flags=re.MULTILINE)
+# for data in r:
+#     print(data.group())
+
+Terminal Output:
+<re.Match object; span=(23, 33), match='DC03 UK R1'>
+['DC03 UK R1']
+DC03 UK R1
+
+
+------------------------------------------------------------------------------------
+
+print(re.search(pattern=r"^D.+1$", string=str1, flags=re.MULTILINE))
+print(re.findall(pattern=r"^D.+1$", string=str1, flags=re.MULTILINE))
+r = re.finditer(pattern=r"^D.+1\$", string=str1, flags=re.MULTILINE)
+for data in r:
+    print(data.group())
+
+Terminal output:
+<re.Match object; span=(0, 11), match='DC01 IND R1'>
+['DC01 IND R1', 'DC02 US R1', 'DC03 UK R1']
+
+
+----------------------------------------------------------------------
+#\A only the matches the first occurence
+
+
+print(re.search(pattern=r"\AD.+1$", string=str1, flags=re.MULTILINE))
+print(re.findall(pattern=r"\AD.+1$", string=str1, flags=re.MULTILINE))
+r = re.finditer(pattern=r"\AD.+1\$", string=str1, flags=re.MULTILINE)
+for data in r:
+    print(data.group())
+
+
+Terminal Output:
+<re.Match object; span=(0, 11), match='DC01 IND R1'>
+['DC01 IND R1']
+----------------------------------------------------------------------
+#\Z matches only the last occurence
+
+print(re.search(pattern=r"^D.+1\Z", string=str1, flags=re.MULTILINE))
+print(re.findall(pattern=r"^D.+\Z", string=str1, flags=re.MULTILINE))
+r = re.finditer(pattern=r"^D.+1\Z", string=str1, flags=re.MULTILINE)
+for data in r:
+    print(data.group())
+
+Terminal Output:
+<re.Match object; span=(23, 33), match='DC03 UK R1'>
+['DC03 UK R1']
+DC03 UK R1
+
+----------------------------------------------------------------------
+'''
+\b :Matches the empty string,
+ but only at the beginning or end of a word. 
+
+ \B
+Matches the empty string, word should be in the middle  
+ '''
+#matches empty string only at beginning or end
+my_pattern = re.compile(r'\Bcisco')
+string1 = '1ciscoroutercciscowerwer'
+print(my_pattern.search(string1))
+
+----------------------------------------------------------------------
+
+'''{m,n}'''
+my_pattern = re.compile(r'cisco{2,5}') # expecting 2-5 sequence of character "o"
+string1 = 'ciscorouterciscoo'# this will match
+print(my_pattern.search(string1))
+
+my_pattern = re.compile(r'cisco{2,5}') # expecting 2-5 sequence of character "o"
+string1 = 'ciscoroutercisco'# this will not match
+print(my_pattern.search(string1))
+
+----------------------------------------------------------------------
+''' \''''
+
+#this will match a string that ends with "*" character that's of the line
+#noinspection PyRedeclaration
+my_pattern = re.compile(r'\*\n')
+print(my_pattern.search(ver_output))
+
+Terminal Output:
+<re.Match object; span=(52, 54), match='*\n'>
+
+----------------------------------------------------------------------
+
+'''match'''
+my_string = 'abcd1234abcd'
+print(re.match('abcd', my_string)) # Matches only the beginning of the string
+print(re.search('1234abcd', my_string)) # match anything on the string
+print(re.fullmatch('abcd1234abcd', my_string)) # match exact string
+
+<re.Match object; span=(0, 4), match='abcd'>
+<re.Match object; span=(4, 12), match='1234abcd'>
+<re.Match object; span=(0, 12), match='abcd1234abcd'>
+----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
