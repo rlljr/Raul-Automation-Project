@@ -17,12 +17,14 @@ password = getpass(f"Enter Password of the user {username}: ") or "admin"
 
 def cisco_cmd_executor(hostname):
     print(f"Connecting to the device {hostname}..")
+    print(hostname)
+    last_octet = hostname.split(".")
+    last_oct = str(last_octet[-1])
     try:
         ssh_client = client.SSHClient()
         ssh_client.set_missing_host_key_policy(client.AutoAddPolicy())
         ssh_client.connect(hostname=hostname, port=22, username=username, password=password, look_for_keys=False,
                            allow_agent=False, timeout=10)
-
         print(f"Connected to the device {hostname}")
         device_access = ssh_client.invoke_shell()
         device_access.send(" terminal len 0\n")
@@ -35,7 +37,7 @@ def cisco_cmd_executor(hostname):
             time.sleep(1)
             output = device_access.recv(65535)
             print(output.decode(),end='')
-            device_access.send(f" ip address 10.10.{i}.{i} 255.255.255.0\n")
+            device_access.send(f" ip address 10.10.{i}.{last_oct} 255.255.255.0\n")
             time.sleep(1)
             output = device_access.recv(65535)
             print(output.decode(), end='')
@@ -61,7 +63,10 @@ def cisco_cmd_executor(hostname):
         return "False"
 
 cisco_cmd_executor("172.16.20.154")
-cisco_cmd_executor("172.16.20.210")
+cisco_cmd_executor("172.16.20.211")
+
+# x= "172.16.20.154".split(".")
+# print(x[-1])
 
 # for i in range(1,101):
 #     print("conf t")
