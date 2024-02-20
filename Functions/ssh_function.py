@@ -2,9 +2,7 @@ import time
 
 from paramiko import client
 from getpass import getpass
-import socket
 
-# hostname = 'nxos1.test.lab'
 username = input("Enter Username:")
 
 if not username:
@@ -12,9 +10,6 @@ if not username:
     print(f"No username provided, considering default username {username}")
 
 password = getpass(f"Enter Password of the user {username}: ") or "admin"
-
-csr_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.1 255.255.255.0', 'end']
-nxos_cmd = ['config t', 'int lo1001', 'ip address 1.1.1.2 255.255.255.0', 'end']
 
 def cisco_cmd_executor(hostname, commands):
     print(f"Connecting to the device {hostname}..")
@@ -34,14 +29,5 @@ def cisco_cmd_executor(hostname, commands):
         output = device_access.recv(65535)
         #print(output.decode(), end='')
         command_output +=output.decode()
-
-    #device_access.send("show run int lo1001\n")
-    # time.sleep(2)
-    # output = device_access.recv(65535)
-    # print(output.decode())
-
     ssh_client.close()
     return command_output
-#
-# cisco_cmd_executor('172.16.20.210', csr_cmd)
-# cisco_cmd_executor('172.16.20.154', nxos_cmd)
